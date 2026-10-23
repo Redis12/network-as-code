@@ -1,0 +1,18 @@
+# Distribution bâtiment 1 - serveur VTP
+vtp_mode: server       # c'est lui qui crée les VLANs
+host_octet: 1          # ses IP de SVI finissent en .1
+hsrp_active: [10, 30]  # Active HSRP (et donc root STP primary) pour ces VLANs
+
+# Trunks DTP vers les switches d'accès
+trunks: [e0/2, e0/3, e1/0]   # AC-SW1, AC-SW2, AC-SW3
+
+# EtherChannel L2 vers DS-SW2
+etherchannel:
+  id: 1
+  protocol: lacp
+  members: [e0/0, e0/1]
+
+# Liens L3 vers les cores (/30)
+uplinks:
+  - { port: e1/1, ip: 172.16.1.2,  network: 172.16.1.0,  neighbor: Core-SW1 }
+  - { port: e1/2, ip: 172.16.1.18, network: 172.16.1.16, neighbor: Core-SW2 }

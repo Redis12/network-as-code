@@ -1,0 +1,5 @@
+vtp_mode: client
+uplinks: [e0/2, e0/3]
+ports:
+  - { port: e0/0, vlan: 30 }   # VPC13
+  - { port: e0/1, vlan: 10 }   # VPC14

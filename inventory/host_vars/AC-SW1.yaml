@@ -1,0 +1,6 @@
+# Accès bâtiment 1 - client VTP, pas de routage
+vtp_mode: client
+uplinks: [e0/2, e0/3]    # trunks DTP (auto) vers DS-SW1 et DS-SW2
+ports:
+  - { port: e0/0, vlan: 10 }   # VPC1
+  - { port: e0/1, vlan: 20 }   # VPC10

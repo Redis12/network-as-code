@@ -1,0 +1,4 @@
+# Inventaire : quels switches existent et à quel groupe ils appartiennent
+batiment1:
+  distribution: [DS-SW1, DS-SW2]
+  access: [AC-SW1, AC-SW2, AC-SW3]

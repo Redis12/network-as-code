@@ -1,0 +1,75 @@
+! ===== Config générée automatiquement - NE PAS MODIFIER À LA MAIN =====
+! Switch de distribution : {{ hostname }}
+!
+hostname {{ hostname }}
+ip routing
+!
+! --- VTP ---
+vtp domain {{ vtp_domain }}
+vtp password {{ vtp_password }}
+vtp mode {{ vtp_mode }}
+{% if vtp_mode == "server" %}
+!
+! --- Création des VLANs (uniquement sur le serveur VTP) ---
+{% for vlan in vlans %}
+vlan {{ vlan.id }}
+{% endfor %}
+{% endif %}
+!
+! --- STP : root primary = VLANs où le switch est Active HSRP ---
+spanning-tree mode {{ stp_mode }}
+{% for vlan in vlans %}
+{% if vlan.id in hsrp_active %}
+spanning-tree vlan {{ vlan.id }} root primary
+{% else %}
+spanning-tree vlan {{ vlan.id }} root secondary
+{% endif %}
+{% endfor %}
+!
+! --- EtherChannel vers l'autre distribution ---
+interface range {{ etherchannel.members | join(" , ") }}
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group {{ etherchannel.id }} mode {{ "active" if etherchannel.protocol == "lacp" else "desirable" }}
+ exit
+!
+! --- Trunks DTP vers les switches d'accès ---
+interface range {{ trunks | join(" , ") }}
+ switchport trunk encapsulation dot1q
+ switchport mode dynamic desirable
+ exit
+!
+! --- Liens L3 vers les cores ---
+{% for up in uplinks %}
+interface {{ up.port }}
+ description Lien vers {{ up.neighbor }}
+ no switchport
+ ip address {{ up.ip }} 255.255.255.252
+ no shutdown
+ exit
+{% endfor %}
+!
+! --- SVI + HSRP ---
+{% for vlan in vlans %}
+interface vlan {{ vlan.id }}
+ ip address {{ vlan.prefix }}.{{ host_octet }} 255.255.255.0
+ standby {{ vlan.id }} ip {{ vlan.vip }}
+ standby {{ vlan.id }} priority {{ 110 if vlan.id in hsrp_active else 100 }}
+ standby {{ vlan.id }} preempt
+ no shutdown
+ exit
+{% endfor %}
+!
+! --- EIGRP ---
+router eigrp {{ eigrp_as }}
+{% for up in uplinks %}
+ network {{ up.network }} 0.0.0.3
+{% endfor %}
+{% for vlan in vlans %}
+ network {{ vlan.prefix }}.0 0.0.0.255
+ passive-interface vlan {{ vlan.id }}
+{% endfor %}
+ no auto-summary
+ exit
+!
+end

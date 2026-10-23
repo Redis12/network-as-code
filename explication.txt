@@ -1,0 +1,27 @@
+Le principe:
+Le script lit les fichiers dans cet ordre: all -> batiment1 -> le switch. Si une valeur est définie à plusieurs endroits, c'est la plus précise qui gagne.
+
+
+dans groups_var/all y'aura des paramètres qui sont vraies pour tout le réseaux exemple:
+chaque switch:
+	stp_mode: rapid-psvt
+	eigrp_as: 200
+
+
+dans groups_var/batiment1 ce qui est vraie que pour le batiment1 (les trucs en commun quoi)
+chaque switch:
+	vtp_domain: BAT1
+	vtp_password: Cisco123
+
+et les vlans (ip,vip,id)
+
+
+
+dans host_vars/DS-SW2.yaml (seulement les paramètres unique à DS-SW2) et ainsi de suite voilà le projet
+
+hosts.yaml (qui est qui)
+
+
+
+		
+	

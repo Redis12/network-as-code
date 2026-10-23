@@ -1,0 +1,27 @@
+! ===== Config générée automatiquement - NE PAS MODIFIER À LA MAIN =====
+! Switch d'accès : {{ hostname }}
+!
+hostname {{ hostname }}
+!
+! --- VTP ---
+vtp domain {{ vtp_domain }}
+vtp password {{ vtp_password }}
+vtp mode {{ vtp_mode }}
+!
+spanning-tree mode {{ stp_mode }}
+!
+! --- Uplinks vers les distributions (DTP auto) ---
+interface range {{ uplinks | join(" , ") }}
+ switchport mode dynamic auto
+ exit
+!
+! --- Ports des PC ---
+{% for p in ports %}
+interface {{ p.port }}
+ switchport mode access
+ switchport access vlan {{ p.vlan }}
+ spanning-tree portfast
+ exit
+{% endfor %}
+!
+end

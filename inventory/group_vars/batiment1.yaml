@@ -1,0 +1,16 @@
+# Valeurs communes à tous les switches du bâtiment 1
+vtp_domain: BAT1
+vtp_password: cisco123   # labo uniquement, jamais de vrai mot de passe sur GitHub
+
+# Les VLANs du bâtiment, écrits une seule fois
+# prefix = le réseau sans le dernier octet (l'IP du switch = prefix + host_octet)
+vlans:
+  - id: 10
+    prefix: 192.168.14
+    vip: 192.168.14.3
+  - id: 20
+    prefix: 192.168.24
+    vip: 192.168.24.3
+  - id: 30
+    prefix: 192.168.34
+    vip: 192.168.34.3

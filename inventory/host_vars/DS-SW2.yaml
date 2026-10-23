@@ -1,0 +1,15 @@
+# Distribution bâtiment 1 - client VTP
+vtp_mode: client       # reçoit les VLANs de DS-SW1, ne les crée pas
+host_octet: 2          # ses IP de SVI finissent en .2
+hsrp_active: [20]      # Active HSRP (et donc root STP primary) pour le VLAN 20
+
+trunks: [e1/0, e0/3, e0/2]   # AC-SW1, AC-SW2, AC-SW3
+
+etherchannel:
+  id: 1
+  protocol: lacp
+  members: [e0/0, e0/1]
+
+uplinks:
+  - { port: e1/1, ip: 172.16.1.6,  network: 172.16.1.4,  neighbor: Core-SW1 }
+  - { port: e1/2, ip: 172.16.1.22, network: 172.16.1.20, neighbor: Core-SW2 }
