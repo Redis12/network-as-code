@@ -16,3 +16,7 @@ etherchannel:
 uplinks:
   - { port: e1/1, ip: 172.16.1.2,  network: 172.16.1.0,  neighbor: Core-SW1 }
   - { port: e1/2, ip: 172.16.1.18, network: 172.16.1.16, neighbor: Core-SW2 }
+
+# Management
+mgmt_port: e1/3
+mgmt_octet: 211     # IP de management = 192.168.201.211

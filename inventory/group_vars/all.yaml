@@ -1,3 +1,7 @@
 # Valeurs communes à TOUT le réseau
 stp_mode: rapid-pvst
 eigrp_as: 200
+
+# Accès SSH (le mot de passe n'est JAMAIS ici : generate.py le demande)
+ssh_user: admin
+domain_name: lab.local

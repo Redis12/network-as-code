@@ -1,0 +1,33 @@
+# À chaque push : on vérifie que l'inventaire et les templates génèrent bien
+# toutes les configs (StrictUndefined fait échouer si une variable manque)
+# et que les scripts Python sont valides. Le labo n'est pas joignable d'ici,
+# donc verify.py n'est pas lancé, seulement compilé.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Générer les configs
+        env:
+          NAC_SSH_PASSWORD: ci-factice   # faux mot de passe, juste pour remplir le bootstrap
+        run: python generate.py
+
+      - name: Vérifier la syntaxe des scripts
+        run: python -m py_compile inventory.py generate.py verify.py
+
+      - name: Afficher une config générée
+        run: cat configs/DS-SW1.txt

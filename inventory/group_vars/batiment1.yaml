@@ -14,3 +14,9 @@ vlans:
   - id: 30
     prefix: 192.168.34
     vip: 192.168.34.3
+
+# Réseau de management (relié au Cloud "Net" d'EVE-NG)
+# IP du switch = prefix + mgmt_octet (défini dans host_vars)
+mgmt:
+  prefix: 192.168.201
+  mask: 255.255.255.0

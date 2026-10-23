@@ -4,3 +4,7 @@ uplinks: [e0/2, e0/3]    # trunks DTP (auto) vers DS-SW1 et DS-SW2
 ports:
   - { port: e0/0, vlan: 10 }   # VPC1
   - { port: e0/1, vlan: 20 }   # VPC10
+
+# Management
+mgmt_port: e1/0
+mgmt_octet: 221     # IP de management = 192.168.201.221

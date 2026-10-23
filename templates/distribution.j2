@@ -1,22 +1,18 @@
-! ===== Config générée automatiquement - NE PAS MODIFIER À LA MAIN =====
-! Switch de distribution : {{ hostname }}
-!
+{# Config générée automatiquement - NE PAS MODIFIER À LA MAIN #}
+{# Switch de distribution : {{ hostname }} #}
 hostname {{ hostname }}
 ip routing
-!
-! --- VTP ---
+{# VTP #}
 vtp domain {{ vtp_domain }}
 vtp password {{ vtp_password }}
 vtp mode {{ vtp_mode }}
 {% if vtp_mode == "server" %}
-!
-! --- Création des VLANs (uniquement sur le serveur VTP) ---
+{# Création des VLANs (uniquement sur le serveur VTP) #}
 {% for vlan in vlans %}
 vlan {{ vlan.id }}
 {% endfor %}
 {% endif %}
-!
-! --- STP : root primary = VLANs où le switch est Active HSRP ---
+{# STP : root primary = VLANs où le switch est Active HSRP #}
 spanning-tree mode {{ stp_mode }}
 {% for vlan in vlans %}
 {% if vlan.id in hsrp_active %}
@@ -25,21 +21,18 @@ spanning-tree vlan {{ vlan.id }} root primary
 spanning-tree vlan {{ vlan.id }} root secondary
 {% endif %}
 {% endfor %}
-!
-! --- EtherChannel vers l'autre distribution ---
+{# EtherChannel vers l'autre distribution #}
 interface range {{ etherchannel.members | join(" , ") }}
  switchport trunk encapsulation dot1q
  switchport mode trunk
  channel-group {{ etherchannel.id }} mode {{ "active" if etherchannel.protocol == "lacp" else "desirable" }}
  exit
-!
-! --- Trunks DTP vers les switches d'accès ---
+{# Trunks DTP vers les switches d'accès #}
 interface range {{ trunks | join(" , ") }}
  switchport trunk encapsulation dot1q
  switchport mode dynamic desirable
  exit
-!
-! --- Liens L3 vers les cores ---
+{# Liens L3 vers les cores #}
 {% for up in uplinks %}
 interface {{ up.port }}
  description Lien vers {{ up.neighbor }}
@@ -48,8 +41,7 @@ interface {{ up.port }}
  no shutdown
  exit
 {% endfor %}
-!
-! --- SVI + HSRP ---
+{# SVI + HSRP #}
 {% for vlan in vlans %}
 interface vlan {{ vlan.id }}
  ip address {{ vlan.prefix }}.{{ host_octet }} 255.255.255.0
@@ -59,8 +51,7 @@ interface vlan {{ vlan.id }}
  no shutdown
  exit
 {% endfor %}
-!
-! --- EIGRP ---
+{# EIGRP #}
 router eigrp {{ eigrp_as }}
 {% for up in uplinks %}
  network {{ up.network }} 0.0.0.3
@@ -71,5 +62,4 @@ router eigrp {{ eigrp_as }}
 {% endfor %}
  no auto-summary
  exit
-!
 end

@@ -1,2 +1,5 @@
 pyyaml
 jinja2
+netmiko
+# paramiko 5 a supprimé les algorithmes SSH SHA-1, les seuls que proposent les images IOL du labo
+paramiko<5
