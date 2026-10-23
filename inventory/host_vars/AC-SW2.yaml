@@ -3,3 +3,7 @@ uplinks: [e0/2, e0/3]
 ports:
   - { port: e0/0, vlan: 20 }   # VPC11
   - { port: e0/1, vlan: 30 }   # VPC12
+
+# Management
+mgmt_port: e1/0
+mgmt_octet: 222     # IP de management = 192.168.201.222

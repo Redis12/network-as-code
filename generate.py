@@ -1,4 +1,6 @@
 """Génère la config Cisco de chaque switch à partir de l'inventaire YAML."""
+import os
+from getpass import getpass
 from pathlib import Path
 
 import yaml
@@ -26,6 +28,12 @@ def main():
                       trim_blocks=True, lstrip_blocks=True,
                       undefined=StrictUndefined)
     OUT.mkdir(exist_ok=True)
+    (OUT / "bootstrap").mkdir(exist_ok=True)
+
+    # Le mot de passe SSH n'est jamais dans le dépôt : variable d'environnement
+    # NAC_SSH_PASSWORD si elle existe, sinon on le demande (rien ne s'affiche à la frappe)
+    ssh_password = os.environ.get("NAC_SSH_PASSWORD") or getpass("Mot de passe SSH des switches : ")
+    bootstrap = env.get_template("bootstrap.j2")
 
     for group, roles in hosts.items():          # ex. batiment1
         group_vars = load(INV / "group_vars" / f"{group}.yaml")
@@ -37,7 +45,10 @@ def main():
                         **load(INV / "host_vars" / f"{name}.yaml"),
                         "hostname": name}
                 (OUT / f"{name}.txt").write_text(template.render(data), encoding="utf-8")
-                print(f"OK  {name}  ({role})")
+                # configs/ est ignoré par Git : le mot de passe ne part pas sur GitHub
+                (OUT / "bootstrap" / f"{name}.txt").write_text(
+                    bootstrap.render(data, ssh_password=ssh_password), encoding="utf-8")
+                print(f"OK  {name}  ({role} + bootstrap)")
 
 
 if __name__ == "__main__":

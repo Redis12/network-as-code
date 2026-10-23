@@ -1,0 +1,28 @@
+! ===== Config générée automatiquement - NE PAS MODIFIER À LA MAIN =====
+! Bootstrap (à coller en premier, à la console) : {{ hostname }}
+! Donne au switch une IP de management et active SSH pour Netmiko
+!
+hostname {{ hostname }}
+!
+! --- Port de management (relié au Cloud "Net" dans EVE-NG) ---
+interface {{ mgmt_port }}
+ description Management
+ no switchport
+ ip address {{ mgmt.prefix }}.{{ mgmt_octet }} {{ mgmt.mask }}
+ no shutdown
+ exit
+!
+! --- Compte local (le mot de passe vient de generate.py, jamais du dépôt) ---
+username {{ ssh_user }} privilege 15 secret {{ ssh_password }}
+!
+! --- SSH (la clé RSA a besoin d'un nom de domaine) ---
+ip domain-name {{ domain_name }}
+crypto key generate rsa modulus 2048
+ip ssh version 2
+!
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+!
+end
